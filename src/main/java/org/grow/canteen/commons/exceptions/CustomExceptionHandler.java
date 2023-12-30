@@ -26,6 +26,8 @@ import org.springframework.web.multipart.support.MissingServletRequestPartExcept
 import org.springframework.web.servlet.NoHandlerFoundException;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
+import java.util.Objects;
+
 @ControllerAdvice
 public class CustomExceptionHandler extends ResponseEntityExceptionHandler {
 
@@ -38,16 +40,16 @@ public class CustomExceptionHandler extends ResponseEntityExceptionHandler {
     @Override
     protected ResponseEntity<Object> handleMethodArgumentNotValid(MethodArgumentNotValidException ex, HttpHeaders headers, HttpStatusCode status, WebRequest request) {
         ErrorResponse errorResponse=new ErrorResponse(String.valueOf(status.value()),
-                ex.getBindingResult().getFieldError().getDefaultMessage());
+                Objects.requireNonNull(ex.getBindingResult().getFieldError()).getDefaultMessage());
         return  new ResponseEntity<>(errorResponse, HttpStatus.BAD_REQUEST);
     }
 
-    @Override
-    protected ResponseEntity<Object> handleBindException(BindException ex, HttpHeaders headers, HttpStatusCode status, WebRequest request) {
-        ErrorResponse errorResponse=new ErrorResponse(String.valueOf(status.value()),
-                ex.getBindingResult().getAllErrors().get(0).getDefaultMessage());
-        return  new ResponseEntity<>(errorResponse, HttpStatus.BAD_REQUEST);
-    }
+//    @Override
+//    protected ResponseEntity<Object> handleBindException(BindException ex, HttpHeaders headers, HttpStatusCode status, WebRequest request) {
+//        ErrorResponse errorResponse=new ErrorResponse(String.valueOf(status.value()),
+//                ex.getBindingResult().getAllErrors().get(0).getDefaultMessage());
+//        return  new ResponseEntity<>(errorResponse, HttpStatus.BAD_REQUEST);
+//    }
 
     @Override
     protected ResponseEntity<Object> handleHttpRequestMethodNotSupported(HttpRequestMethodNotSupportedException ex, HttpHeaders headers, HttpStatusCode status, WebRequest request) {
